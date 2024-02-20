@@ -15,8 +15,6 @@ abstract class OpenRemoteSubscribeConnector<T> {
 
     protected abstract val clientId : String
 
-    private val subscribeTopic = "master/$clientId/attribute/$attributeName/$assetId"
-
     private val logger = LoggerFactory.getLogger("${OpenRemoteSubscribeConnector::class.java}_${attributeName}.${assetId}")
 
     /**
@@ -25,7 +23,7 @@ abstract class OpenRemoteSubscribeConnector<T> {
      */
     private val subscribers = mutableListOf<OpenRemoteConnectorRunnable<T>>()
 
-    private inner class Callback() : MqttCallback
+    private inner class Callback(private val subscribeTopic : String) : MqttCallback
     {
         override fun connectionLost(cause: Throwable?) {
             //ни чего не делаем, если что - то написать здесь, вылезет множество сообщений в случае потери соединения
@@ -34,7 +32,8 @@ abstract class OpenRemoteSubscribeConnector<T> {
         override fun messageArrived(topic: String?, message: MqttMessage?) {
             if(topic == subscribeTopic)
             {
-                logger.info("RD:${message!!.payload}")
+                logger.info("RD:${message!!.payload.toString(Charsets.UTF_8)}")
+
             }
 
         }
@@ -45,12 +44,13 @@ abstract class OpenRemoteSubscribeConnector<T> {
 
     }
 
-    init {
-        client.setCallback(Callback())
+    fun start() {
+        val subscribeTopic = "master/$clientId/attribute/$attributeName/$assetId"
+        client.setCallback(Callback(subscribeTopic))
         client.subscribe(subscribeTopic, 0);
     }
 
-    fun subscribeTopic(topic : String, action : OpenRemoteConnectorRunnable<T>)
+    fun subscribe(action : OpenRemoteConnectorRunnable<T>)
     {
         subscribers.add(action)
     }

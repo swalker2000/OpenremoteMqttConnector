@@ -1,7 +1,17 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+import com.openremote.telebot.OpenRemoteConnectorRunnable
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+fun main(args: Array<String>) {
+    //val ignoreCertificates = IgnoreCertificates()
+    //ignoreCertificates.ignoreCertificates()
+    val openRemoteConnectorFactory = OpenRemoteConnectorFactory(
+        "",
+        8883,
+        "client123",
+        "master:mqttuser",
+        ""
+        )
+    val connector = openRemoteConnectorFactory.getOpenRemoteConnector<Boolean>("TextToBot", "")
+    connector.subscribe{println("new message")}
+    connector.start()
+    readln()
 }

@@ -5,7 +5,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
 import com.google.gson.Gson
-import inmessagerepository.InMessageRepository
 import messge.OpenRemoteMqttMessage
 
 
@@ -42,18 +41,6 @@ class OpenRemoteSubscribeConnector<T>(
                 logger.info("RD:${rd}")
                 val inMessage = gson.fromJson(rd, OpenRemoteMqttMessage<T>().javaClass)
                 subscribers.forEach { it.run(inMessage) }
-                /*
-                if(!InMessageRepository.whetherTheMessageHasAlreadyBeenChecked(inMessage.ref.id))
-                {
-                    logger.info("Unique message")
-                    subscribers.forEach { it.run(inMessage) }
-                }
-                else
-                {
-                    logger.warn("Not unique message")
-                }
-                */
-
             }
 
         }

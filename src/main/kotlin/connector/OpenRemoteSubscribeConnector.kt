@@ -11,9 +11,10 @@ import connector.messge.OpenRemoteMqttMessage
 
 class OpenRemoteSubscribeConnector<T>(
     val client : MqttClient,
-    private val attributeName : String,
-    private val assetId : String,
-    private val clientId : String
+    attributeName : String,
+    assetId : String,
+    clientId : String,
+    realm : String
     ) {
 
 
@@ -27,7 +28,7 @@ class OpenRemoteSubscribeConnector<T>(
      */
     private val subscribers = mutableListOf<OpenRemoteConnectorRunnable<T>>()
 
-    private val subscribeTopic = "master/$clientId/attribute/$attributeName/$assetId"
+    private val subscribeTopic = "$realm/$clientId/attribute/$attributeName/$assetId"
 
     private inner class Callback() : MqttCallback
     {

@@ -9,10 +9,11 @@ class OpenRemotePublishConnector<T>(
     val client : MqttClient,
     attributeName : String,
     assetId : String,
-    clientId : String
+    clientId : String,
+    realm : String
 ) {
 
-    private val topic = "master/$clientId/writeattributevalue/$attributeName/$assetId"
+    private val topic = "$realm/$clientId/writeattributevalue/$attributeName/$assetId"
     private val qos = 2
     private val logger = LoggerFactory.getLogger("${OpenRemotePublishConnector::class.java}[${attributeName}.${assetId}]")
 

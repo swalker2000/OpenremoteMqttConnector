@@ -7,6 +7,7 @@ fun main(args: Array<String>) {
         System.getenv("host"),
         System.getenv("port").toInt(),
         System.getenv("clientId"),
+        System.getenv("realm"),
         )
         .authorizationByLoginAndPassword(System.getenv("username"),System.getenv("password"))
         .trustAllCerts()

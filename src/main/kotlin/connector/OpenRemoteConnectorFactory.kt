@@ -9,7 +9,8 @@ import java.io.IOException
 class OpenRemoteConnectorFactory(
     private val host : String,
     private val port : Int,
-    private val clientId : String) {
+    private val clientId : String,
+    private val realm : String) {
 
     private val logger = LoggerFactory.getLogger("${OpenRemoteConnectorFactory::class.java}.${clientId}")
     private inner class Callback() : MqttCallback
@@ -36,8 +37,7 @@ class OpenRemoteConnectorFactory(
 
     private var protocol : Protocol = Protocol.MQTTS
 
-    lateinit var client : MqttClient
-        private set
+    private lateinit var client : MqttClient
 
     private val connOpts = MqttConnectOptions()
 
@@ -65,7 +65,7 @@ class OpenRemoteConnectorFactory(
      */
     fun authorizationByLoginAndPassword(username : String, password : String,) : OpenRemoteConnectorFactory
     {
-        connOpts.userName = username
+        connOpts.userName = "$realm:$username"
         connOpts.password = password.toCharArray()
         return this
     }
@@ -97,7 +97,7 @@ class OpenRemoteConnectorFactory(
     fun <T>getOpenRemoteSubscribeConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
     {
         returnExceptionIfNotBuild()
-        return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId)
+        return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId, realm)
     }
 
     /**
@@ -106,7 +106,7 @@ class OpenRemoteConnectorFactory(
     fun <T>getOpenRemotePublishConnector(attributeName : String, assetId : String) : OpenRemotePublishConnector<T>
     {
         returnExceptionIfNotBuild()
-        return OpenRemotePublishConnector<T>(client, attributeName, assetId, clientId)
+        return OpenRemotePublishConnector<T>(client, attributeName, assetId, clientId, realm)
     }
 
     private fun returnExceptionIfNotBuild()

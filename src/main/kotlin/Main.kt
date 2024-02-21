@@ -1,5 +1,3 @@
-import com.openremote.telebot.OpenRemoteConnectorRunnable
-
 fun main(args: Array<String>) {
     //val ignoreCertificates = IgnoreCertificates()
     //ignoreCertificates.ignoreCertificates()
@@ -10,7 +8,15 @@ fun main(args: Array<String>) {
         System.getenv("username"),
         System.getenv("password")
         )
-    val connector = openRemoteConnectorFactory.getOpenRemoteConnector<Boolean>( System.getenv("attributeName"), System.getenv("assetId"))
-    connector.subscribe{println("new message : ${it.value}")}
+    val subscribeConnector = openRemoteConnectorFactory.getOpenRemoteSubscribeConnector<String>( System.getenv("attributeSubscribeName"), System.getenv("assetId"))
+    val publishConnector = openRemoteConnectorFactory.getOpenRemotePublishConnector<Boolean>( System.getenv("attributePublishName"), System.getenv("assetId"))
+    subscribeConnector.subscribe{println("new message : ${it.value}")}
+    var publishValue= false
+    while (true)
+    {
+        publishConnector.publish(publishValue)
+        publishValue=!publishValue
+        Thread.sleep(3000)
+    }
     readln()
 }

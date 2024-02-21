@@ -1,17 +1,13 @@
 import org.eclipse.paho.client.mqttv3.*
 import org.slf4j.LoggerFactory
-import java.security.KeyStore
-import java.security.SecureRandom
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManagerFactory
 
 
 class OpenRemoteConnectorFactory(
-    val host : String,
-    val port : Int,
-    val clientId : String,
-    val username : String,
-    val password : String) {
+    private val host : String,
+    private val port : Int,
+    private val clientId : String,
+    private val username : String,
+    private val password : String) {
 
     private val logger = LoggerFactory.getLogger("${OpenRemoteConnectorFactory::class.java}_${clientId}")
     private inner class Callback() : MqttCallback
@@ -56,9 +52,17 @@ class OpenRemoteConnectorFactory(
     /**
      *
      */
-    fun <T>getOpenRemoteConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
+    fun <T>getOpenRemoteSubscribeConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
     {
         return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId)
+    }
+
+    /**
+     *
+     */
+    fun <T>getOpenRemotePublishConnector(attributeName : String, assetId : String) : OpenRemotePublishConnector<T>
+    {
+        return OpenRemotePublishConnector<T>(client, attributeName, assetId, clientId)
     }
 
 }

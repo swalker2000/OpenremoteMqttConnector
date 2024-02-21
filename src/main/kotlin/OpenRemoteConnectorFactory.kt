@@ -58,16 +58,7 @@ class OpenRemoteConnectorFactory(
      */
     fun <T>getOpenRemoteConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
     {
-        //:todo посмотреть как расширить область видимости
-        val client = this.client
-        val clientId = this.clientId
-        return object : OpenRemoteSubscribeConnector<T>()
-        {
-            override val client : MqttClient =  client
-            override val attributeName : String = attributeName
-            override val assetId : String = assetId
-            override val clientId: String = clientId
-        }
+        return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId)
     }
 
 }

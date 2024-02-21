@@ -5,15 +5,13 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
 
-abstract class OpenRemoteSubscribeConnector<T> {
+class OpenRemoteSubscribeConnector<T>(
+    val client : MqttClient,
+    private val attributeName : String,
+    private val assetId : String,
+    private val clientId : String
+    ) {
 
-    protected abstract val client : MqttClient
-
-    protected abstract val attributeName : String
-
-    protected abstract val assetId : String
-
-    protected abstract val clientId : String
 
     private val logger = LoggerFactory.getLogger("${OpenRemoteSubscribeConnector::class.java}_${attributeName}.${assetId}")
 

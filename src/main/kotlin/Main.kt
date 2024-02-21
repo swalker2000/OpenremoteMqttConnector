@@ -1,5 +1,7 @@
+import connector.OpenRemoteConnectorFactory
+
 fun main(args: Array<String>) {
-    //val ignoreCertificates = IgnoreCertificates()
+    //val ignoreCertificates = connector.ssltools.IgnoreCertificates()
     //ignoreCertificates.ignoreCertificates()
     val openRemoteConnectorFactory = OpenRemoteConnectorFactory(
         System.getenv("host"),

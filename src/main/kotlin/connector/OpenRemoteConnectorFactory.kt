@@ -1,3 +1,6 @@
+package connector
+
+import connector.ssltools.IgnoreCertificates
 import org.eclipse.paho.client.mqttv3.*
 import org.slf4j.LoggerFactory
 

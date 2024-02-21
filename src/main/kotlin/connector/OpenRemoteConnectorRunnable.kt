@@ -1,6 +1,6 @@
-package com.openremote.telebot
+package connector
 
-import messge.OpenRemoteMqttMessage
+import connector.messge.OpenRemoteMqttMessage
 
 fun interface OpenRemoteConnectorRunnable<T> {
 

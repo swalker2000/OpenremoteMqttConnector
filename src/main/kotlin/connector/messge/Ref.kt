@@ -1,4 +1,4 @@
-package messge
+package connector.messge
 
 /**
  * Идентификатор сообщения приходящего по MQTT.

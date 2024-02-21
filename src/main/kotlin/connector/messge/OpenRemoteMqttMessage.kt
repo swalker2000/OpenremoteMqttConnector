@@ -1,4 +1,4 @@
-package messge
+package connector.messge
 
 /**
  * Формат данных сообщения пришедшего по MQTT.

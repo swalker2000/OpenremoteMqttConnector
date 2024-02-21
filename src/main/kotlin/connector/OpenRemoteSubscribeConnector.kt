@@ -1,11 +1,12 @@
-import com.openremote.telebot.OpenRemoteConnectorRunnable
+package connector
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
 import com.google.gson.Gson
-import messge.OpenRemoteMqttMessage
+import connector.messge.OpenRemoteMqttMessage
 
 
 class OpenRemoteSubscribeConnector<T>(

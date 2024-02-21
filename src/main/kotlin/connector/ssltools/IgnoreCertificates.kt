@@ -1,3 +1,5 @@
+package connector.ssltools
+
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.HttpsURLConnection

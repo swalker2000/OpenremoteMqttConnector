@@ -3,16 +3,15 @@ package connector
 import connector.ssltools.IgnoreCertificates
 import org.eclipse.paho.client.mqttv3.*
 import org.slf4j.LoggerFactory
+import java.io.IOException
 
 
 class OpenRemoteConnectorFactory(
     private val host : String,
     private val port : Int,
-    private val clientId : String,
-    private val username : String,
-    private val password : String) {
+    private val clientId : String) {
 
-    private val logger = LoggerFactory.getLogger("${OpenRemoteConnectorFactory::class.java}_${clientId}")
+    private val logger = LoggerFactory.getLogger("${OpenRemoteConnectorFactory::class.java}.${clientId}")
     private inner class Callback() : MqttCallback
     {
         override fun connectionLost(cause: Throwable?) {
@@ -35,28 +34,69 @@ class OpenRemoteConnectorFactory(
 
     /*******CONNECTION*******/
 
-    private val broker = "ssl://$host:$port"
+    private var protocol : Protocol = Protocol.MQTTS
 
-    private val client : MqttClient = MqttClient(broker, clientId)
+    lateinit var client : MqttClient
+        private set
+
+    private val connOpts = MqttConnectOptions()
 
     private val ignoreCertificates = IgnoreCertificates()
 
-    init {
-        val connOpts = MqttConnectOptions()
-        connOpts.socketFactory=ignoreCertificates.getIgnoreSSLContext().socketFactory
-        connOpts.isHttpsHostnameVerificationEnabled = false
+    private var builded = false
+
+    /*****SETUP******/
+
+    /**
+     * Build OpenRemoteConnectorFactory.
+     */
+    fun build() : OpenRemoteConnectorFactory {
+        val broker = "${protocol.urlPrefix}://$host:$port"
+        client = MqttClient(broker, clientId)
         connOpts.isCleanSession = true
-        connOpts.userName = username
-        connOpts.password = password.toCharArray()
         client.connect(connOpts)
         client.setCallback(Callback())
+        builded = true
+        return this
     }
+
+    /**
+     * Authorization to MQTT by login and password.
+     */
+    fun authorizationByLoginAndPassword(username : String, password : String,) : OpenRemoteConnectorFactory
+    {
+        connOpts.userName = username
+        connOpts.password = password.toCharArray()
+        return this
+    }
+
+    /**
+     *   Trust all SSL certs.
+     *   (only for mqtts)
+     */
+    fun trustAllCerts() : OpenRemoteConnectorFactory
+    {
+        connOpts.socketFactory=ignoreCertificates.getIgnoreSSLContext().socketFactory
+        connOpts.isHttpsHostnameVerificationEnabled = false
+        return this
+    }
+
+    /**
+     * Set protocol (mqtt or mqtts).
+     * (default mqtts)
+     */
+    fun setProtocol(protocol: Protocol)
+    {
+        this.protocol = protocol
+    }
+
 
     /**
      *
      */
     fun <T>getOpenRemoteSubscribeConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
     {
+        returnExceptionIfNotBuild()
         return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId)
     }
 
@@ -65,7 +105,14 @@ class OpenRemoteConnectorFactory(
      */
     fun <T>getOpenRemotePublishConnector(attributeName : String, assetId : String) : OpenRemotePublishConnector<T>
     {
+        returnExceptionIfNotBuild()
         return OpenRemotePublishConnector<T>(client, attributeName, assetId, clientId)
+    }
+
+    private fun returnExceptionIfNotBuild()
+    {
+        if(!builded)
+            throw RuntimeException("Call the build method on the ${OpenRemoteConnectorFactory::class} object before calling this method." )
     }
 
 }

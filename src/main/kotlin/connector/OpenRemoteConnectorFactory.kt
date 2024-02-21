@@ -3,7 +3,6 @@ package connector
 import connector.ssltools.IgnoreCertificates
 import org.eclipse.paho.client.mqttv3.*
 import org.slf4j.LoggerFactory
-import java.io.IOException
 
 
 class OpenRemoteConnectorFactory(
@@ -96,7 +95,7 @@ class OpenRemoteConnectorFactory(
      */
     fun <T>getOpenRemoteSubscribeConnector(attributeName : String, assetId : String) : OpenRemoteSubscribeConnector<T>
     {
-        returnExceptionIfNotBuild()
+        buildIfNotBuilded()
         return OpenRemoteSubscribeConnector<T>(client, attributeName, assetId, clientId, realm)
     }
 
@@ -105,14 +104,14 @@ class OpenRemoteConnectorFactory(
      */
     fun <T>getOpenRemotePublishConnector(attributeName : String, assetId : String) : OpenRemotePublishConnector<T>
     {
-        returnExceptionIfNotBuild()
+        buildIfNotBuilded()
         return OpenRemotePublishConnector<T>(client, attributeName, assetId, clientId, realm)
     }
 
-    private fun returnExceptionIfNotBuild()
+    private fun buildIfNotBuilded()
     {
         if(!builded)
-            throw RuntimeException("Call the build method on the ${OpenRemoteConnectorFactory::class} object before calling this method." )
+            build()
     }
 
 }

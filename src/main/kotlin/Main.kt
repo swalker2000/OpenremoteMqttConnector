@@ -11,7 +11,6 @@ fun main(args: Array<String>) {
         System.getenv("password")
         )
     val connector = openRemoteConnectorFactory.getOpenRemoteConnector<Boolean>( System.getenv("attributeName"), System.getenv("assetId"))
-    connector.subscribe{println("new message")}
-    connector.start()
+    connector.subscribe{println("new message : ${it.value}")}
     readln()
 }

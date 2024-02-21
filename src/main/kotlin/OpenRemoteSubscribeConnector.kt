@@ -4,6 +4,10 @@ import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
+import com.google.gson.Gson
+import inmessagerepository.InMessageRepository
+import messge.OpenRemoteMqttMessage
+
 
 class OpenRemoteSubscribeConnector<T>(
     val client : MqttClient,
@@ -13,7 +17,9 @@ class OpenRemoteSubscribeConnector<T>(
     ) {
 
 
-    private val logger = LoggerFactory.getLogger("${OpenRemoteSubscribeConnector::class.java}_${attributeName}.${assetId}")
+    private val logger = LoggerFactory.getLogger("${OpenRemoteSubscribeConnector::class.java}[${attributeName}.${assetId}]")
+
+    private val gson:Gson  = Gson()
 
     /**
      * Список подписчиков topic.
@@ -21,7 +27,9 @@ class OpenRemoteSubscribeConnector<T>(
      */
     private val subscribers = mutableListOf<OpenRemoteConnectorRunnable<T>>()
 
-    private inner class Callback(private val subscribeTopic : String) : MqttCallback
+    private val subscribeTopic = "master/$clientId/attribute/$attributeName/$assetId"
+
+    private inner class Callback() : MqttCallback
     {
         override fun connectionLost(cause: Throwable?) {
             //ни чего не делаем, если что - то написать здесь, вылезет множество сообщений в случае потери соединения
@@ -30,7 +38,21 @@ class OpenRemoteSubscribeConnector<T>(
         override fun messageArrived(topic: String?, message: MqttMessage?) {
             if(topic == subscribeTopic)
             {
-                logger.info("RD:${message!!.payload.toString(Charsets.UTF_8)}")
+                val rd = message!!.payload.toString(Charsets.UTF_8)
+                logger.info("RD:${rd}")
+                val inMessage = gson.fromJson(rd, OpenRemoteMqttMessage<T>().javaClass)
+                subscribers.forEach { it.run(inMessage) }
+                /*
+                if(!InMessageRepository.whetherTheMessageHasAlreadyBeenChecked(inMessage.ref.id))
+                {
+                    logger.info("Unique message")
+                    subscribers.forEach { it.run(inMessage) }
+                }
+                else
+                {
+                    logger.warn("Not unique message")
+                }
+                */
 
             }
 
@@ -42,9 +64,8 @@ class OpenRemoteSubscribeConnector<T>(
 
     }
 
-    fun start() {
-        val subscribeTopic = "master/$clientId/attribute/$attributeName/$assetId"
-        client.setCallback(Callback(subscribeTopic))
+   init {
+        client.setCallback(Callback())
         client.subscribe(subscribeTopic, 0);
     }
 

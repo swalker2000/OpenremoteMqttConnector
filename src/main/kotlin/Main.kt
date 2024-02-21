@@ -4,13 +4,13 @@ fun main(args: Array<String>) {
     //val ignoreCertificates = IgnoreCertificates()
     //ignoreCertificates.ignoreCertificates()
     val openRemoteConnectorFactory = OpenRemoteConnectorFactory(
-        "",
-        8883,
-        "client123",
-        "master:mqttuser",
-        ""
+        System.getenv("host"),
+        System.getenv("port").toInt(),
+        System.getenv("clientId"),
+        System.getenv("username"),
+        System.getenv("password")
         )
-    val connector = openRemoteConnectorFactory.getOpenRemoteConnector<Boolean>("TextToBot", "")
+    val connector = openRemoteConnectorFactory.getOpenRemoteConnector<Boolean>( System.getenv("attributeName"), System.getenv("assetId"))
     connector.subscribe{println("new message")}
     connector.start()
     readln()

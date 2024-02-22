@@ -38,13 +38,14 @@ class OpenRemoteConnectorFactory(
 
     private lateinit var client : MqttClient
 
-    private val connOpts = MqttConnectOptions()
+    val connOpts = MqttConnectOptions()
 
     private val ignoreCertificates = IgnoreCertificates()
 
     private var builded = false
 
     /*****SETUP******/
+
 
     /**
      * Build OpenRemoteConnectorFactory.

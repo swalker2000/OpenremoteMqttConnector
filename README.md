@@ -1,4 +1,19 @@
 <h1>Java and Kotlin library for connecting to an openremote server as a client.</h1>
+<h2>Connecting the library</h2>
+Clone the project and add it to the local maven repository using the command.
+
+     gradle publishToMavenLocal
+Or build the project using your IDE and add it to the local maven repository using it.
+
+    repositories {
+        mavenCentral()
+        mavenLocal()//add this
+    }
+And include the library
+
+    implementation("org.openremote:Openremotemqttconnector:0.0.0")
+
+
 <h2>Quick start</h2>
 An example of subscribing and publishing an event.<br/>
 

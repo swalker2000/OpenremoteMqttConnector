@@ -4,7 +4,10 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
 
-
+/**
+ * Allows you to publish data to the openremote server.
+ *  - instructions https://github.com/openremote/openremote/wiki/Tutorial%3A-Connect-your-MQTT-Client
+ */
 class OpenRemotePublishConnector<T>(
     val client : MqttClient,
     attributeName : String,

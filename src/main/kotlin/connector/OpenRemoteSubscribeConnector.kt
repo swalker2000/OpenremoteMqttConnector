@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory
 import com.google.gson.Gson
 import connector.messge.OpenRemoteMqttMessage
 
-
+/**
+ * Allows you to subscribe to the event of data arrival from the openremote server.
+ *  - instructions https://github.com/openremote/openremote/wiki/Tutorial%3A-Connect-your-MQTT-Client
+ */
 class OpenRemoteSubscribeConnector<T>(
     val client : MqttClient,
     attributeName : String,

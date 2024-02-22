@@ -1,8 +1,7 @@
 import connector.OpenRemoteConnectorFactory
 
 fun main(args: Array<String>) {
-    //val ignoreCertificates = connector.ssltools.IgnoreCertificates()
-    //ignoreCertificates.ignoreCertificates()
+    //Create factory
     val openRemoteConnectorFactory = OpenRemoteConnectorFactory(
         System.getenv("host"),
         System.getenv("port").toInt(),
@@ -12,9 +11,12 @@ fun main(args: Array<String>) {
         .authorizationByLoginAndPassword(System.getenv("username"),System.getenv("password"))
         .trustAllCerts()
         .build()
+    //subscribe on event
     val subscribeConnector = openRemoteConnectorFactory.getOpenRemoteSubscribeConnector<String>( System.getenv("attributeSubscribeName"), System.getenv("assetId"))
-    val publishConnector = openRemoteConnectorFactory.getOpenRemotePublishConnector<Boolean>( System.getenv("attributePublishName"), System.getenv("assetId"))
     subscribeConnector.subscribe{println("new message : ${it.value}")}
+
+    //publish event
+    val publishConnector = openRemoteConnectorFactory.getOpenRemotePublishConnector<Boolean>( System.getenv("attributePublishName"), System.getenv("assetId"))
     var publishValue= false
     while (true)
     {
